@@ -220,5 +220,78 @@ To determine if there is a statistical significative difference between both val
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
+* Converting variable "date" from class "character" to class "Date"
+
+
+```r
+newdata$date <- as.Date(newdata$date)
+```
+
+* Changing locally the language to english
+
+
+```r
+Sys.setlocale("LC_ALL","C")
+```
+
+```
+## [1] "C"
+```
+
+* Create a new factor variable in the dataset with two levels: "weekday" and "weekend"
+
+
+```r
+newdata$typeofday <- weekdays(newdata$date)
+wend <- c("Saturday", "Sunday")
+wday <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
+for(h in 1:length(newdata$typeofday)){
+      if(newdata$typeofday[h] %in% wend){
+            newdata$typeofday[h] <- "weekend"
+      }
+      if(newdata$typeofday[h] %in% wday){
+            newdata$typeofday[h] <- "weekday"
+      }
+}
+newdata$typeofday <- as.factor(newdata$typeofday)
+```
+
+* Calculating the average number of steps taken by 5-minute intervals and type of day across all days
+
+
+```r
+agdata <- aggregate(newdata$steps, by=list(Interval=newdata$interval, Typeofday=newdata$typeofday), mean)
+head(agdata)
+```
+
+```
+##   Interval Typeofday          x
+## 1        0   weekday 2.25115304
+## 2        5   weekday 0.44528302
+## 3       10   weekday 0.17316562
+## 4       15   weekday 0.19790356
+## 5       20   weekday 0.09895178
+## 6       25   weekday 1.59035639
+```
+
+* Time series plot of the average number of steps taken by 5-minute intervals and type of day across all days
+
+
+```r
+library("lattice")
+xyplot(agdata$x ~ agdata$Interval | agdata$Typeofday, t="l", layout=c(1,2),
+       xlab = "5-minute Intervals Across all Days", ylab = "Average Number of Steps Taken",
+       main = "Average Number of Steps Taken by 5-minute Intervals\nand Type of Day Across all Days")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-20-1.png) 
+
+
+As we can see from the compared image the time serie of the average steps taken by 5-minute intervals for weekday and weekend are different. 
+The figure for weekday has clearly a higher peak at about 8:30 in the morning which might represent the hurry of not going late to work, while the time serie for weekend has higher values for intervals at noon as well as during the afternoon, which may represent walkings that are not possible during the weekdays.
+
+
+
+
 
 

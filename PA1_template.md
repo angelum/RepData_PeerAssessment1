@@ -1,7 +1,7 @@
 # Reproducible Research: Peer Assessment 1
 
 Before processing the data it is recommended
-that the "activity.csv" and "PA1_template.Rmd" files are in the working directory.
+to put the "activity.csv" and "PA1_template.Rmd" files  in the working directory.
 
 ## Loading and preprocessing the data
 
@@ -46,22 +46,28 @@ abline(v=mean(nspday), col="white")
 text("mean", x=12200, y=22, cex=0.9, col="white")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+![](PA1_template_files/figure-html/Figure 1-1.png) 
 
 The mean and the median of the number of steps taken each day can be obtained as follows:
 
 
 ```r
-mean(nspday); median(nspday) 
+mean1 <- mean(nspday); mean1
 ```
 
 ```
 ## [1] 10766.19
 ```
 
+```r
+median1 <- median(nspday); median1 
+```
+
 ```
 ## [1] 10765
 ```
+
+As we can see both the value of the mean the median  are pretty close to each other, which means that the distribution is approximately normal.
 
 ## What is the average daily activity pattern?
 
@@ -86,8 +92,7 @@ vint <- table(datanoNA$interval)
 vint <- as.numeric((dimnames(vint)[[1]]))
 ```
 
-* Time series plot of the 5-minute interval (x-axis) and
-the average number of steps taken, averaged across all days (y-axis)
+* Time series plot of the average number of steps taken by 5-minute intervals across all days.
 
 
 ```r
@@ -95,10 +100,10 @@ par(mar=c(5,5,5,2), bg="ivory")
 plot(avest ~ vint, type="l",
      main="Average Number of Steps Taken by 5-minute intervals\nAcross all Days",
       xlab="5-minute Intervals Across all Days",
-      ylab="Average Number of Steps Taken")
+      ylab="Average Number of Steps")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-8-1.png) 
+![](PA1_template_files/figure-html/Figure 2-1.png) 
 
 Then the 5-minute interval which contains the maximum number of steps can be obtained using:
 
@@ -111,7 +116,7 @@ m <- which.max(avest); as.numeric(names(m))
 ## [1] 835
 ```
 
-This means that at 8:35 a.m. the number of steps taken is higher than in any other 5-minute period across all days on average, which is not a surprise since at that hour of the day people are more active. To reflect this value we can update our plot like this: 
+This means that at 8:35 a.m. the number of steps taken is higher than in any other 5-minute period across all days on average, which is not a surprise since at that time of the day people are more active trying to arrive on time to work as an example. To reflect this value we can update our plot like this: 
 
 
 ```r
@@ -119,12 +124,12 @@ par(mar=c(5,5,5,2), bg="ivory")
 plot(avest ~ vint, type="l",
      main="Average Number of Steps Taken by 5-minute intervals\nAcross all Days",
       xlab="5-minute Intervals Across all Days",
-      ylab="Average Number of Steps Taken")
+      ylab="Average Number of Steps")
 abline(v=names(m), col=2)
 text(names(m), x=950, y=200, cex=0.9)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-10-1.png) 
+![](PA1_template_files/figure-html/Figure 3-1.png) 
 
 ## Imputing missing values
 
@@ -141,7 +146,9 @@ numberNA <- nrow(data) - nrow(datanoNA); numberNA
 
 * Strategy for filling in all of the missing values in the dataset.
 
-Considering that there are NA values for the number of steps taken, I imputed these values taking the average of the 5-minute intervals across all days, because in that way the data will not be distorted significantly.
+Considering that there are NA values for the number of steps taken, I imputed these values by taking the average of steps taken by 5-minute intervals across all days, because in that way the data will not be distorted significantly.
+
+Example: If there is a missing value for interval "425" on any given day, then the imputed value will be the average number of steps taken for all the "425" intervals across all the days with no NA values.
 
 * Creating a new dataset with the missing data filled in.
 
@@ -172,7 +179,7 @@ head(newdata)
 ## 6 2.0943396 2012-10-01       25
 ```
 
-* Total number of steps taken per day using newdata
+* Total number of steps taken per day using new data with imputed values.
 
 
 ```r
@@ -185,7 +192,7 @@ head(nspdaynd)
 ##   10766.19     126.00   11352.00   12116.00   13294.00   15420.00
 ```
 
-* Histogram of the total number of steps taken each day using newdata
+* Histogram of the total number of steps taken each day using new data with imputed values.
 
 
 ```r
@@ -197,17 +204,21 @@ abline(v=mean(nspday), col="tan4")
 text("mean", x=12200, y=27, cex=0.9, col="tan4")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-14-1.png) 
+![](PA1_template_files/figure-html/Figure 4-1.png) 
 
-* Calculating the mean and the median of nsbdaynd 
+* Calculating the mean and the median of the number of steps taken by 5-minute intervals across all days using the new data with imputed values. 
 
 
 ```r
-mean(nspdaynd); median(nspdaynd)
+mean2 <- mean(nspdaynd); mean2
 ```
 
 ```
 ## [1] 10766.19
+```
+
+```r
+median2 <- median(nspdaynd); median2
 ```
 
 ```
@@ -232,10 +243,6 @@ newdata$date <- as.Date(newdata$date)
 
 ```r
 Sys.setlocale("LC_ALL","C")
-```
-
-```
-## [1] "C"
 ```
 
 * Create a new factor variable in the dataset with two levels: "weekday" and "weekend"
@@ -280,11 +287,11 @@ head(agdata)
 ```r
 library("lattice")
 xyplot(agdata$x ~ agdata$Interval | agdata$Typeofday, t="l", layout=c(1,2),
-       xlab = "5-minute Intervals Across all Days", ylab = "Average Number of Steps Taken",
+       xlab = "5-minute Intervals Across all Days", ylab = "Average Number of Steps",
        main = "Average Number of Steps Taken by 5-minute Intervals\nand Type of Day Across all Days")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-20-1.png) 
+![](PA1_template_files/figure-html/Figure 5-1.png) 
 
 
 As we can see from the compared image the time serie of the average steps taken by 5-minute intervals for weekday and weekend are different. 
